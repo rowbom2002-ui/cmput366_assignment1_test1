@@ -1,0 +1,34 @@
+Command: python main.py (from starter/) -> generates nodes_expanded.png and running_time.png.
+Command: python - <<'PY' (weighted A* expansions output).
+
+Columns: normal_astar_expansions weighted_astar_expansions
+101 42
+343 105
+1774 235
+5260 4460
+656 77
+3276 2717
+1577 1577
+3759 1168
+2646 349
+1577 1577
+1161 195
+787 232
+1577 1577
+709 97
+27 12
+1562 97
+1577 1577
+2406 572
+1304 298
+1952 183
+159 39
+1110 171
+4751 2284
+378 264
+1577 1577
+1206 390
+167 45
+1362 175
+1221 219
+4247 3660
