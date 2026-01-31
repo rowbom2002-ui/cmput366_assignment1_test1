@@ -102,4 +102,94 @@ class State:
         Sets the cost of the state; the cost is determined by the search algorithm 
         """
         self._cost = cost
+
+
+def reconstruct_path(goal_state):
+    path = []
+    current = goal_state
+    while current is not None:
+        path.append(current)
+        current = current.get_parent()
+    path.reverse()
+    return path
+
+
+def dijkstra(start, goal, gridded_map):
+    open_list = []
+    closed = {}
+    best_g = {}
+
+    start.set_g(0)
+    start.set_cost(0)
+    start.set_parent(None)
+    heapq.heappush(open_list, start)
+    best_g[start.state_hash()] = 0
+
+    while open_list:
+        current = heapq.heappop(open_list)
+        current_hash = current.state_hash()
+        if current_hash in closed:
+            continue
+
+        closed[current_hash] = current
+
+        if current == goal:
+            return reconstruct_path(current), current.get_g(), len(closed)
+
+        for child in gridded_map.successors(current):
+            child_hash = child.state_hash()
+            if child_hash in closed:
+                continue
+            child_g = child.get_g()
+            if child_hash not in best_g or child_g < best_g[child_hash]:
+                best_g[child_hash] = child_g
+                child.set_parent(current)
+                child.set_cost(child_g)
+                heapq.heappush(open_list, child)
+
+    return None, -1, len(closed)
+
+
+def heuristic(state, goal):
+    dx = abs(state.get_x() - goal.get_x())
+    dy = abs(state.get_y() - goal.get_y())
+    diagonal_steps = min(dx, dy)
+    straight_steps = abs(dx - dy)
+    return 1.5 * diagonal_steps + straight_steps
+
+
+def astar(start, goal, gridded_map):
+    open_list = []
+    closed = {}
+    best_g = {}
+
+    start.set_g(0)
+    start.set_cost(heuristic(start, goal))
+    start.set_parent(None)
+    heapq.heappush(open_list, start)
+    best_g[start.state_hash()] = 0
+
+    while open_list:
+        current = heapq.heappop(open_list)
+        current_hash = current.state_hash()
+        if current_hash in closed:
+            continue
+
+        closed[current_hash] = current
+
+        if current == goal:
+            return reconstruct_path(current), current.get_g(), len(closed)
+
+        for child in gridded_map.successors(current):
+            child_hash = child.state_hash()
+            if child_hash in closed:
+                continue
+            child_g = child.get_g()
+            if child_hash not in best_g or child_g < best_g[child_hash]:
+                best_g[child_hash] = child_g
+                child.set_parent(current)
+                child.set_cost(child_g + heuristic(child, goal))
+                heapq.heappush(open_list, child)
+
+    return None, -1, len(closed)
     
